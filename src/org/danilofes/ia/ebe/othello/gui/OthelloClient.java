@@ -1,18 +1,16 @@
-package reversi;
+package org.danilofes.ia.ebe.othello.gui;
 
 import javax.swing.JOptionPane;
 
-import reversi.ai.AverageEvaluator;
-import reversi.ai.ComputerPlayer;
-import reversi.ai.ExpertEvaluator;
-import reversi.ai.NoobEvaluator;
-import reversi.core.Board;
-import reversi.core.GameState;
-import reversi.core.Player;
-import reversi.gui.GameUI;
-import reversi.gui.HumanPlayer;
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.ia.ebe.othello.OthelloAction;
+import org.danilofes.ia.ebe.othello.OthelloState;
+import org.danilofes.ia.ebe.othello.evaluator.AverageEvaluator;
+import org.danilofes.ia.ebe.othello.evaluator.ExpertEvaluator;
+import org.danilofes.ia.ebe.othello.evaluator.NoobEvaluator;
 
-public class GameClient extends Thread {
+
+public class OthelloClient extends Thread {
 	
 	private static final int UNSTARTED = 0;
 	private static final int STARTED = 1;
@@ -24,9 +22,9 @@ public class GameClient extends Thread {
 	public static final int COMPUTER_HARD = 3;
 	
 	private static GameUI gameUI;
-	private static GameState gameState;
-	private static int darkPlayerType = Player.HUMAN;
-	private static int lightPlayerType = Player.COMPUTER_NORMAL;
+	private static OthelloState gameState;
+	private static int darkPlayerType = UIPlayer.HUMAN;
+	private static int lightPlayerType = UIPlayer.COMPUTER_NORMAL;
 	private static int state = UNSTARTED;
 	
 	private static Thread currentGame;
@@ -44,49 +42,49 @@ public class GameClient extends Thread {
 		
 		switch (lightPlayerType){
 		case HUMAN:{
-			Player.LIGHT = new HumanPlayer("Branco", Board.LIGHT);
+			UIPlayer.LIGHT = new HumanPlayer("Branco", Player.PLAYER_2);
 			break;
 		}
 		case COMPUTER_EASY:{
-			Player.LIGHT = new ComputerPlayer("Branco", Board.LIGHT, new NoobEvaluator());
+			UIPlayer.LIGHT = new ComputerPlayer("Branco", Player.PLAYER_2, new NoobEvaluator());
 			break;
 		}
 		case COMPUTER_NORMAL:{
-			Player.LIGHT = new ComputerPlayer("Branco", Board.LIGHT, new AverageEvaluator());
+			UIPlayer.LIGHT = new ComputerPlayer("Branco", Player.PLAYER_2, new AverageEvaluator());
 			break;
 		}
 		case COMPUTER_HARD:{
-			Player.LIGHT = new ComputerPlayer("Branco", Board.LIGHT, new ExpertEvaluator());
+			UIPlayer.LIGHT = new ComputerPlayer("Branco", Player.PLAYER_2, new ExpertEvaluator());
 			break;
 		}
 		}
 		
 		switch (darkPlayerType){
 		case HUMAN:{
-			Player.DARK = new HumanPlayer("Preto", Board.DARK);
+			UIPlayer.DARK = new HumanPlayer("Preto", Player.PLAYER_1);
 			break;
 		}
 		case COMPUTER_EASY:{
-			Player.DARK = new ComputerPlayer("Preto", Board.DARK, new NoobEvaluator());
+			UIPlayer.DARK = new ComputerPlayer("Preto", Player.PLAYER_1, new NoobEvaluator());
 			break;
 		}
 		case COMPUTER_NORMAL:{
-			Player.DARK = new ComputerPlayer("Preto", Board.DARK, new AverageEvaluator());
+			UIPlayer.DARK = new ComputerPlayer("Preto", Player.PLAYER_1, new AverageEvaluator());
 			break;
 		}
 		case COMPUTER_HARD:{
-			Player.DARK = new ComputerPlayer("Preto", Board.DARK, new ExpertEvaluator());
+			UIPlayer.DARK = new ComputerPlayer("Preto", Player.PLAYER_1, new ExpertEvaluator());
 			break;
 		}
 		}
 				
-		Player.DARK.setOpponent(Player.LIGHT);
-		Player.LIGHT.setOpponent(Player.DARK);
+		UIPlayer.DARK.setOpponent(UIPlayer.LIGHT);
+		UIPlayer.LIGHT.setOpponent(UIPlayer.DARK);
 		
 		gameState.initialState();
-		Player.DARK.start();
-		Player.LIGHT.start();
-		currentGame = new GameClient();
+		UIPlayer.DARK.start();
+		UIPlayer.LIGHT.start();
+		currentGame = new OthelloClient();
 		currentGame.start();
 	}
 	
@@ -108,10 +106,11 @@ public class GameClient extends Thread {
 				if (interrupted()) throw new InterruptedException();
 				gameUI.refresh("Esperando jogada de " + gameState.getNextPlayer() + "...");
 				yield();
-				gameState.changeState(gameState.getNextPlayer().getMove());
+				OthelloAction nextMove = UIPlayer.getFromSlot(gameState.getNextPlayer()).getMove();
+				gameState.changeState(nextMove);
 			} catch (InterruptedException e) {
-				Player.DARK.die();
-				Player.LIGHT.die();
+				UIPlayer.DARK.die();
+				UIPlayer.LIGHT.die();
 				return;
 			}
 		}
@@ -120,15 +119,15 @@ public class GameClient extends Thread {
 		String message;
 		if (winner == null) message = "Empate!\n";
 		else message = gameState.getWinner() + " ganhou!\n";
-		message += Player.DARK + " " + gameState.getScore(Player.DARK) + " x " + 
-			gameState.getScore(Player.LIGHT) + " " + Player.LIGHT;
+		message += Player.PLAYER_1 + " " + gameState.getScore(Player.PLAYER_1) + " x " + 
+			gameState.getScore(Player.PLAYER_2) + " " + Player.PLAYER_2;
 		JOptionPane.showMessageDialog(gameUI, message, "Fim do Jogo", JOptionPane.INFORMATION_MESSAGE);
 		state = FINISHED;
 		return;
 	}
 	
 	public static void main(String[] args){		
-		gameState = GameState.getInstance();
+		gameState = OthelloState.getInstance();
 		gameUI = new GameUI();
 		gameUI.refresh("Escolha (Jogo > Novo) no menu para iniciar.");
 	}

@@ -1,23 +1,25 @@
-package reversi.ai;
+package org.danilofes.ia.ebe.othello.gui;
 
 import java.util.List;
 
-import reversi.core.GameState;
-import reversi.core.Move;
-import reversi.core.Player;
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.ia.ebe.core.StateEvaluator;
+import org.danilofes.ia.ebe.othello.OthelloAction;
+import org.danilofes.ia.ebe.othello.OthelloState;
 
-public class ComputerPlayer extends Player implements Runnable{
+
+public class ComputerPlayer extends UIPlayer implements Runnable{
 
 	private static final int MAX_DEPTH = 5;
 
-	private GameState gameState = GameState.getInstance();
+	private OthelloState gameState = OthelloState.getInstance();
 	private Thread me = null;
 
-	private StateEvaluator evaluator;
+	private StateEvaluator<OthelloState> evaluator;
 
-	private Move bestMove;
+	private OthelloAction bestMove;
 
-	public ComputerPlayer(String name, byte color, StateEvaluator evaluator){
+	public ComputerPlayer(String name, Player color, StateEvaluator evaluator){
 		super(name, color);
 		this.evaluator = evaluator;
 		me = new Thread(this);
@@ -47,19 +49,19 @@ public class ComputerPlayer extends Player implements Runnable{
 		}
 	}
 	
-	private int alphaBetaSearch(GameState state) throws InterruptedException{
+	private int alphaBetaSearch(OthelloState state) throws InterruptedException{
 		int v = maxValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
 		return v;
 	}
 	
-	private int maxValue(GameState state, int alpha, int beta, int depth) throws InterruptedException{
+	private int maxValue(OthelloState state, int alpha, int beta, int depth) throws InterruptedException{
 		if (Thread.interrupted()) throw new InterruptedException();
 		if (depth >= MAX_DEPTH || state.isGameOver()){
-			return evaluator.evaluate(state, this);			
+			return evaluator.evaluate(state, this.COLOR);			
 		}
 		int v = Integer.MIN_VALUE;
 		int moveIndex = 0;
-		List<Move> list = state.getPossibleMoves();
+		List<OthelloAction> list = state.getPossibleMoves();
 		//Collections.sort(list);
 		for (int i = 0; i < list.size(); i++){
 			int min = minValue(state.newState(list.get(i)), alpha, beta, depth + 1);
@@ -77,13 +79,13 @@ public class ComputerPlayer extends Player implements Runnable{
 		return v;		
 	}
 	
-	private int minValue(GameState state, int alpha, int beta, int depth) throws InterruptedException{
+	private int minValue(OthelloState state, int alpha, int beta, int depth) throws InterruptedException{
 		if (Thread.interrupted()) throw new InterruptedException();
 		if (depth >= MAX_DEPTH || state.isGameOver()){
-			return evaluator.evaluate(state, this);
+			return evaluator.evaluate(state, this.COLOR);
 		}
 		int v = Integer.MAX_VALUE;
-		List<Move> list = state.getPossibleMoves();
+		List<OthelloAction> list = state.getPossibleMoves();
 		//Collections.sort(list);
 		for (int i = 0; i < list.size(); i++){
 			int max = maxValue(state.newState(list.get(i)), alpha, beta, depth + 1);

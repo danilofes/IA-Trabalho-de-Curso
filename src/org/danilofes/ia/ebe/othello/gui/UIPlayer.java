@@ -1,10 +1,14 @@
-package reversi.core;
+package org.danilofes.ia.ebe.othello.gui;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class Player {
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.ia.ebe.othello.OthelloAction;
+import org.danilofes.util.GridCoordinates;
+
+public abstract class UIPlayer {
 	
 	public static final int HUMAN = 0;
 	public static final int COMPUTER_EASY = 1;
@@ -13,33 +17,41 @@ public abstract class Player {
 	
 	private static final long TIMEOUT = 5000;
 	
-	public static Player DARK;
-	public static Player LIGHT;
+	public static UIPlayer DARK;
+	public static UIPlayer LIGHT;
 	
 	private String name;
-	private Player opponent;
-	private Move nextMove = null;
+	private UIPlayer opponent;
+	private OthelloAction nextMove = null;
 	private Lock lock = new ReentrantLock();
 	private Condition moveChosen = lock.newCondition();
 	private boolean myTurn = false;
 	private Condition myTurnToPlay = lock.newCondition();
-	public final byte COLOR;
+	public final Player COLOR;
 	
-	public Player(String name, byte color){
+	public UIPlayer(String name, Player color){
 		super();
 		this.name = name;
 		COLOR = color;
+	}
+	
+	public static UIPlayer getFromSlot(Player player) {
+		if (player == Player.PLAYER_1) {
+			return DARK;
+		} else {
+			return LIGHT;
+		}
 	}
 	
 	public void start(){
 		// implementacao default nao faz nada
 	}
 	
-	public void setOpponent(Player opponent){
+	public void setOpponent(UIPlayer opponent){
 		this.opponent = opponent;
 	}
 	
-	public Player getOpponent(){
+	public UIPlayer getOpponent(){
 		return this.opponent;
 	}
 	
@@ -47,7 +59,7 @@ public abstract class Player {
 	
 	public abstract boolean isComputer();
 	
-	public final Move getMove() throws InterruptedException{
+	public final OthelloAction getMove() throws InterruptedException{
 		lock.lock();		
 		try {
 			nextMove = null;
@@ -74,7 +86,7 @@ public abstract class Player {
 		lock.unlock();
 	}
 	
-	protected final void submitMove(Move move) throws InterruptedException{
+	protected final void submitMove(OthelloAction move) throws InterruptedException{
 		lock.lock();
 		nextMove = move;
 		moveChosen.signal();
@@ -86,7 +98,7 @@ public abstract class Player {
 		// implementacao default nao faz nada
 	}
 	
-	public void listenToMouse(Coordinates c){
+	public void listenToMouse(GridCoordinates c){
 		// implementacao default nao faz nada
 	}
 	

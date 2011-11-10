@@ -1,4 +1,4 @@
-package reversi.gui;
+package org.danilofes.ia.ebe.othello.gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,8 +16,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 
-import reversi.GameClient;
-import reversi.core.Player;
 
 
 public class GameUI extends JFrame {
@@ -81,7 +79,7 @@ public class GameUI extends JFrame {
 		this.setTitle("Reversi");
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
-				GameClient.exit();
+				OthelloClient.exit();
 			}
 		});
 		this.setVisible(true);
@@ -149,7 +147,7 @@ public class GameUI extends JFrame {
 			jMenuItemNovo.setText("Novo jogo");
 			jMenuItemNovo.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					GameClient.newGame();
+					OthelloClient.newGame();
 				}
 			});
 		}
@@ -167,7 +165,7 @@ public class GameUI extends JFrame {
 			jMenuItemExit.setText("Sair");
 			jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					GameClient.exit();
+					OthelloClient.exit();
 				}
 			});
 		}
@@ -243,7 +241,7 @@ public class GameUI extends JFrame {
 			jRadioButtonDarkHuman.setSelected(true);
 			jRadioButtonDarkHuman.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					if(jRadioButtonDarkHuman.isSelected()) GameClient.setDarkPlayer(Player.HUMAN);
+					if(jRadioButtonDarkHuman.isSelected()) OthelloClient.setDarkPlayer(UIPlayer.HUMAN);
 				}
 			});
 		}
@@ -283,7 +281,7 @@ public class GameUI extends JFrame {
 			jRadioButtonLightHuman.setText("Humano");
 			jRadioButtonLightHuman.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					if (jRadioButtonLightHuman.isSelected()) GameClient.setLightPlayer(Player.HUMAN);
+					if (jRadioButtonLightHuman.isSelected()) OthelloClient.setLightPlayer(UIPlayer.HUMAN);
 				}
 			});
 		}
@@ -298,10 +296,10 @@ public class GameUI extends JFrame {
 	private JRadioButtonMenuItem getJRadioButtonDarkEasy() {
 		if (jRadioButtonDarkEasy == null) {
 			jRadioButtonDarkEasy = new JRadioButtonMenuItem();
-			jRadioButtonDarkEasy.setText("Computador (Fácil)");
+			jRadioButtonDarkEasy.setText("Computador (Fï¿½cil)");
 			jRadioButtonDarkEasy.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setDarkPlayer(Player.COMPUTER_EASY);
+					OthelloClient.setDarkPlayer(UIPlayer.COMPUTER_EASY);
 				}
 			});
 		}
@@ -320,7 +318,7 @@ public class GameUI extends JFrame {
 			jRadioButtonDarkNormal
 			.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setDarkPlayer(Player.COMPUTER_NORMAL);
+					OthelloClient.setDarkPlayer(UIPlayer.COMPUTER_NORMAL);
 				}
 			});
 		}
@@ -335,10 +333,10 @@ public class GameUI extends JFrame {
 	private JRadioButtonMenuItem getJRadioButtonDarkHard() {
 		if (jRadioButtonDarkHard == null) {
 			jRadioButtonDarkHard = new JRadioButtonMenuItem();
-			jRadioButtonDarkHard.setText("Computador (Difícil)");
+			jRadioButtonDarkHard.setText("Computador (Difï¿½cil)");
 			jRadioButtonDarkHard.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setDarkPlayer(Player.COMPUTER_HARD);
+					OthelloClient.setDarkPlayer(UIPlayer.COMPUTER_HARD);
 				}
 			});
 		}
@@ -353,10 +351,10 @@ public class GameUI extends JFrame {
 	private JRadioButtonMenuItem getJRadioButtonLightEasy() {
 		if (jRadioButtonLightEasy == null) {
 			jRadioButtonLightEasy = new JRadioButtonMenuItem();
-			jRadioButtonLightEasy.setText("Computador (Fácil)");
+			jRadioButtonLightEasy.setText("Computador (Fï¿½cil)");
 			jRadioButtonLightEasy.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setLightPlayer(Player.COMPUTER_EASY);
+					OthelloClient.setLightPlayer(UIPlayer.COMPUTER_EASY);
 				}
 			});
 		}
@@ -376,7 +374,7 @@ public class GameUI extends JFrame {
 			jRadioButtonLightNormal
 			.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setLightPlayer(Player.COMPUTER_NORMAL);
+					OthelloClient.setLightPlayer(UIPlayer.COMPUTER_NORMAL);
 				}
 			});
 		}
@@ -391,10 +389,10 @@ public class GameUI extends JFrame {
 	private JRadioButtonMenuItem getJRadioButtonLightHard() {
 		if (jRadioButtonLightHard == null) {
 			jRadioButtonLightHard = new JRadioButtonMenuItem();
-			jRadioButtonLightHard.setText("Computador (Difícil)");
+			jRadioButtonLightHard.setText("Computador (Difï¿½cil)");
 			jRadioButtonLightHard.addChangeListener(new javax.swing.event.ChangeListener() {
 				public void stateChanged(javax.swing.event.ChangeEvent e) {
-					GameClient.setLightPlayer(Player.COMPUTER_HARD);
+					OthelloClient.setLightPlayer(UIPlayer.COMPUTER_HARD);
 				}
 			});
 		}

@@ -1,11 +1,12 @@
-package reversi.ai;
+package org.danilofes.ia.ebe.othello.evaluator;
 
-import reversi.core.Board;
-import reversi.core.Coordinates;
-import reversi.core.GameState;
-import reversi.core.Player;
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.ia.ebe.core.StateEvaluator;
+import org.danilofes.ia.ebe.othello.OthelloBoard;
+import org.danilofes.ia.ebe.othello.OthelloState;
+import org.danilofes.util.GridCoordinates;
 
-public class AverageEvaluator implements StateEvaluator{
+public class AverageEvaluator implements StateEvaluator<OthelloState> {
 	
 	public static final int cellValue[][] = {
 		{ 99, -8,  8,  6,  6,  8, -8, 99}, 
@@ -18,7 +19,7 @@ public class AverageEvaluator implements StateEvaluator{
 		{ 99, -8,  8,  6,  6,  8, -8, 99}
 	};
 	
-	public int evaluate(GameState state, Player player) {		
+	public int evaluate(OthelloState state, Player player) {		
 		int myScore = 0;
 		int opponentScore = 0;
 		
@@ -30,15 +31,15 @@ public class AverageEvaluator implements StateEvaluator{
 			else return Integer.MIN_VALUE + myScore;
 		}
 		else {
-			Coordinates c = new Coordinates(0, 0);
-			for (c.row = 0; c.row < Board.SIZE; c.row++) {
-				for (c.column = 0; c.column < Board.SIZE; c.column++) {
+			GridCoordinates c = new GridCoordinates(0, 0);
+			for (c.row = 0; c.row < OthelloBoard.SIZE; c.row++) {
+				for (c.col = 0; c.col < OthelloBoard.SIZE; c.col++) {
 					byte cell = state.getBoard().get(c);
-					if (cell == player.COLOR){
-						myScore += cellValue[c.row][c.column];
+					if (cell == player.getValue()){
+						myScore += cellValue[c.row][c.col];
 					}
-					else if (cell == player.getOpponent().COLOR){
-						myScore -= cellValue[c.row][c.column];
+					else if (cell == player.getOpponent().getValue()){
+						myScore -= cellValue[c.row][c.col];
 					}		
 				}
 			}

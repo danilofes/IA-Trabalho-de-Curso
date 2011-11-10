@@ -1,12 +1,12 @@
 package org.danilofes.ia.ebe.core;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface GameState<A extends GameAction> {
 
 	boolean isFinal();
 
-	Set<A> getActions();
+	Collection<A> getActions();
 
 	GameState<A> apply(A action);
 }

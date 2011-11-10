@@ -1,6 +1,9 @@
-package reversi.core;
+package org.danilofes.ia.ebe.othello;
 
-public class Board implements Cloneable {
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.util.GridCoordinates;
+
+public class OthelloBoard implements Cloneable {
 
 	public static final int SIZE = 8;
 
@@ -13,12 +16,11 @@ public class Board implements Cloneable {
 	int darkScore;
 	int lightScore;
 	
-	public Board(){
+	public OthelloBoard(){
 		
 	}
 
 	public void initialConfiguration(){
-
 		for (int i = 0; i < SIZE; i++) {
 			for (int j = 0; j < SIZE; j++) {
 				cell[i][j] = EMPTY;
@@ -27,48 +29,51 @@ public class Board implements Cloneable {
 		}
 		darkScore = 0;
 		lightScore = 0;
-		insert(Player.LIGHT, new Coordinates(3,3));
-		insert(Player.LIGHT, new Coordinates(4,4));
-		insert(Player.DARK, new Coordinates(3,4));
-		insert(Player.DARK, new Coordinates(4,3));
+		insert(Player.PLAYER_2, new GridCoordinates(3,3));
+		insert(Player.PLAYER_2, new GridCoordinates(4,4));
+		insert(Player.PLAYER_1, new GridCoordinates(3,4));
+		insert(Player.PLAYER_1, new GridCoordinates(4,3));
 	}
 
-	public byte get(Coordinates c){
-		return cell[c.row][c.column];
+	public byte get(GridCoordinates c){
+		return cell[c.row][c.col];
 	}
 
-	public void insert(Player p, Coordinates c){
-		cell[c.row][c.column] = p.COLOR;
-		if (p.COLOR == LIGHT) lightScore++; else darkScore++;		
+	public void insert(Player player, GridCoordinates c){
+		byte color = player.getValue();
+		cell[c.row][c.col] = color;
+		if (color == LIGHT) lightScore++; else darkScore++;		
 		// update borders
-		for (int[] direction : Coordinates.DIRECTIONS) {
-			Coordinates neighbor = new Coordinates(c.row, c.column);
+		for (int[] direction : GridCoordinates.DIRECTIONS) {
+			GridCoordinates neighbor = new GridCoordinates(c.row, c.col);
 			neighbor.moveTo(direction);
 			if (neighbor.isValid()){
-				neighbNumber[neighbor.row][neighbor.column]++;
+				neighbNumber[neighbor.row][neighbor.col]++;
 			}
 		}
 	}
 	
-	boolean processMove(Move move, boolean updateBoard){
+	boolean processMove(OthelloAction move, boolean updateBoard){
+		byte color = move.player.getValue();
+		
 		int flippedPieces = 0;
-		for (int[] direction : Coordinates.DIRECTIONS){
-			Coordinates neighbor = new Coordinates(move.coordinates.row, move.coordinates.column);
+		for (int[] direction : GridCoordinates.DIRECTIONS){
+			GridCoordinates neighbor = new GridCoordinates(move.coordinates.row, move.coordinates.col);
 			neighbor.moveTo(direction);			
 			// enquanto o vizinho nesta direcaoo eh uma peca do adversario pula ...
 			int enemyPiecesFound = 0;
-			while (neighbor.isValid() && move.player.COLOR == -cell[neighbor.row][neighbor.column]){
+			while (neighbor.isValid() && color == -cell[neighbor.row][neighbor.col]){
 				// indica que passou aqui pelo menos uma vez
 				enemyPiecesFound++;
 				neighbor.moveTo(direction);
 			}
 			// o while parou, agora tem que ver se parou numa peca do jogador
-			if ((enemyPiecesFound > 0) && neighbor.isValid() && move.player.COLOR == cell[neighbor.row][neighbor.column]){
+			if ((enemyPiecesFound > 0) && neighbor.isValid() && color == cell[neighbor.row][neighbor.col]){
 				if (updateBoard){
 					// Volta pra traz virando as pecas do adversario
 					for (; enemyPiecesFound > 0; enemyPiecesFound--){
 						neighbor.moveToOposite(direction);
-						cell[neighbor.row][neighbor.column] = (byte)-cell[neighbor.row][neighbor.column];
+						cell[neighbor.row][neighbor.col] = (byte)-cell[neighbor.row][neighbor.col];
 						flippedPieces++;						
 					}
 				}
@@ -76,7 +81,7 @@ public class Board implements Cloneable {
 			}
 		}
 		if (updateBoard){
-			if (move.player.COLOR == LIGHT){
+			if (color == LIGHT){
 				lightScore += flippedPieces;
 				darkScore -= flippedPieces;
 			}
@@ -89,34 +94,34 @@ public class Board implements Cloneable {
 		else return false;
 	}
 
-	public boolean isEmpty(Coordinates c){
-		return cell[c.row][c.column] == EMPTY;
+	public boolean isEmpty(GridCoordinates c){
+		return cell[c.row][c.col] == EMPTY;
 	}
 
-	public boolean isInternal(Coordinates c){
-		if (neighbNumber[c.row][c.column] == 8){
+	public boolean isInternal(GridCoordinates c){
+		if (neighbNumber[c.row][c.col] == 8){
 			return true;
 		}
 		else{
-			if (c.row == 0 || c.row == SIZE-1 || c.column == 0 || c.column == SIZE-1){
-				if (c.row == c.column || c.row + c.column == SIZE-1){
+			if (c.row == 0 || c.row == SIZE-1 || c.col == 0 || c.col == SIZE-1){
+				if (c.row == c.col || c.row + c.col == SIZE-1){
 					return true;
 				}
-				else if (neighbNumber[c.row][c.column] == 5) return true;
+				else if (neighbNumber[c.row][c.col] == 5) return true;
 			}
 		}
 		return false;
 	}
 
-	public Player getPlayer(Coordinates c) throws RuntimeException {
-		if (cell[c.row][c.column] != EMPTY){
-			return cell[c.row][c.column] == DARK ? Player.DARK : Player.LIGHT;
+	public Player getPlayer(GridCoordinates c) throws RuntimeException {
+		if (cell[c.row][c.col] != EMPTY){
+			return cell[c.row][c.col] == DARK ? Player.PLAYER_1 : Player.PLAYER_2;
 		}
 		return null;
 	}
 
-	public Board clone(){
-		Board clonedBoard = new Board();
+	public OthelloBoard clone(){
+		OthelloBoard clonedBoard = new OthelloBoard();
 		for (int i = 0; i < SIZE; i++) {
 			for (int j = 0; j < SIZE; j++) {
 				clonedBoard.cell[i][j] = cell[i][j];

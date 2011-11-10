@@ -1,4 +1,4 @@
-package reversi.gui;
+package org.danilofes.ia.ebe.othello.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,10 +13,11 @@ import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
 
-import reversi.core.Coordinates;
-import reversi.core.GameState;
-import reversi.core.Move;
-import reversi.core.Player;
+import org.danilofes.ia.ebe.core.Player;
+import org.danilofes.ia.ebe.othello.OthelloAction;
+import org.danilofes.ia.ebe.othello.OthelloState;
+import org.danilofes.util.GridCoordinates;
+
 
 
 public class BoardPanel extends JPanel{
@@ -31,15 +32,15 @@ public class BoardPanel extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 	
-	private GameState gameState;
-	private Coordinates mouseOver = null;
+	private OthelloState gameState;
+	private GridCoordinates mouseOver = null;
 	
 	/**
 	 * This is the default constructor
 	 */
 	public BoardPanel() {
 		super();
-		this.gameState = GameState.getInstance();
+		this.gameState = OthelloState.getInstance();
 		initialize();
 	}
 
@@ -53,13 +54,13 @@ public class BoardPanel extends JPanel{
 		this.setLayout(new GridBagLayout());
 		this.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
-				Coordinates mouse = getCoordinatesFromMouse(e.getX(), e.getY());				
-				if (mouse != null) gameState.getNextPlayer().listenToMouse(mouse);
+				GridCoordinates mouse = getCoordinatesFromMouse(e.getX(), e.getY());				
+				if (mouse != null) UIPlayer.getFromSlot(gameState.getNextPlayer()).listenToMouse(mouse);
 			}
 		});
 		this.addMouseMotionListener(new MouseMotionAdapter(){
 			public void mouseMoved(MouseEvent e){
-				Coordinates mouse = getCoordinatesFromMouse(e.getX(), e.getY());
+				GridCoordinates mouse = getCoordinatesFromMouse(e.getX(), e.getY());
 				if (mouseOver == null || !mouseOver.equals(mouse)){
 					mouseOver = mouse;
 					repaint();
@@ -70,12 +71,12 @@ public class BoardPanel extends JPanel{
 		
 	}
 	
-	private Coordinates getCoordinatesFromMouse(int x, int y){
+	private GridCoordinates getCoordinatesFromMouse(int x, int y){
 		if (x >= BOARD_MARGIN && x < BOARD_MARGIN + BOARD_SIZE - 1 && 
 			y >= BOARD_MARGIN && y < BOARD_MARGIN + BOARD_SIZE - 1){
 			int column = (x - BOARD_MARGIN) / (CELL_SIZE + LINE_WIDTH);
 			int row = (y - BOARD_MARGIN) / (CELL_SIZE + LINE_WIDTH);
-			return new Coordinates(row, column);
+			return new GridCoordinates(row, column);
 		}
 		return null;
 	}
@@ -111,9 +112,12 @@ public class BoardPanel extends JPanel{
 						   CELL_SIZE + 2*LINE_WIDTH - 1, 
 						   CELL_SIZE + 2*LINE_WIDTH - 1);
 				
-				if (!(gameState.getBoard().isEmpty(new Coordinates(i, j)))){
-					if (Player.LIGHT.equals(gameState.getBoard().getPlayer(new Coordinates(i, j)))) g2D.setColor(Color.WHITE);
-					else g2D.setColor(Color.BLACK);
+				if (!(gameState.getBoard().isEmpty(new GridCoordinates(i, j)))){
+					if (Player.PLAYER_1 == gameState.getBoard().getPlayer(new GridCoordinates(i, j))) {
+						g2D.setColor(Color.BLACK);
+					} else {
+						g2D.setColor(Color.WHITE);
+					}
 					g2D.fillOval(BOARD_MARGIN + j*(LINE_WIDTH + CELL_SIZE) + LINE_WIDTH + CELL_MARGIN, 
 							   BOARD_MARGIN + i*(LINE_WIDTH + CELL_SIZE) + LINE_WIDTH + CELL_MARGIN, 
 							   CELL_SIZE - 2*CELL_MARGIN, 
@@ -126,10 +130,10 @@ public class BoardPanel extends JPanel{
 			g.drawString(letter[i], BOARD_MARGIN + i*(LINE_WIDTH + CELL_SIZE) + CELL_SIZE/2 - 9, BOARD_MARGIN/2 + 9);
 			g.drawString(letter[i], BOARD_MARGIN + i*(LINE_WIDTH + CELL_SIZE) + CELL_SIZE/2 - 9, PANEL_SIZE - 6);
 		}
-		Player player = gameState.getNextPlayer();
+		UIPlayer player = UIPlayer.getFromSlot(gameState.getNextPlayer());
 		if (mouseOver != null && player != null && player.isHuman()){
-			if (gameState.isValid(new Move(player, mouseOver))){
-				if (Player.LIGHT.equals(player)) g2D.setColor(lightGreen);
+			if (gameState.isValid(new OthelloAction(player.COLOR, mouseOver))){
+				if (UIPlayer.LIGHT.equals(player)) g2D.setColor(lightGreen);
 				else g2D.setColor(darkGreen);
 				g2D.fillOval(BOARD_MARGIN + mouseOver.getColumn()*(LINE_WIDTH + CELL_SIZE) + LINE_WIDTH + CELL_MARGIN, 
 						   BOARD_MARGIN + mouseOver.getRow()*(LINE_WIDTH + CELL_SIZE) + LINE_WIDTH + CELL_MARGIN, 
