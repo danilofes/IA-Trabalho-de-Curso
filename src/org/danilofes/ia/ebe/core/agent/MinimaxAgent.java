@@ -7,12 +7,18 @@ import org.danilofes.ia.ebe.core.StateEvaluator;
 
 public class MinimaxAgent<A extends GameAction> implements GameAgent<A> {
 
-	private final int maxDepth = 5;
+	private final int maxDepth;
 	private StateEvaluator<GameState<A>> evaluator;
 	private A choosenAction;
 
 	public MinimaxAgent(StateEvaluator<? extends GameState<A>> evaluator) {
+		this(evaluator, 5);
+	}
+
+	
+	public MinimaxAgent(StateEvaluator<? extends GameState<A>> evaluator, int maxDepth) {
 		this.evaluator = (StateEvaluator<GameState<A>>) evaluator;
+		this.maxDepth = maxDepth;
 	}
 
 	@Override
