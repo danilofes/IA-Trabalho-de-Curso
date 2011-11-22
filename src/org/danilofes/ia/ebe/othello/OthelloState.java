@@ -15,8 +15,9 @@ public class OthelloState implements GameState<OthelloAction>{
 	private boolean gameOver;
 	private List<OthelloAction> possibleMoves = null;
 	
-	private OthelloState(){
-		super();
+	public OthelloState(){
+		board = new OthelloBoard();
+		this.initialState();
 	}
 	
 	private static OthelloState instance = null;
@@ -24,7 +25,6 @@ public class OthelloState implements GameState<OthelloAction>{
 	public static OthelloState getInstance(){
 		if (instance == null){
 			instance = new OthelloState();
-			instance.board = new OthelloBoard();
 		}		
 		return instance;
 	}
@@ -48,22 +48,16 @@ public class OthelloState implements GameState<OthelloAction>{
 		nextPlayer = Player.PLAYER_1;
 	}
 	
-	public OthelloState newState(OthelloAction move){
-		OthelloState newState = this.clone();
-		newState.changeState(move);
-		return newState;
-	}
-	
-	public boolean isGameOver(){
-		return this.gameOver;
-	}
-	
 	public int getScore(Player player){
 		if (player == Player.PLAYER_2) return board.lightScore;
 		else return board.darkScore;
 	}
 	
 	public Player getWinner(){
+		if (!this.isFinal()) {
+			throw new IllegalStateException();
+		}
+		
 		int darkScore = getScore(Player.PLAYER_1);
 		int lightScore = getScore(Player.PLAYER_2);
 		if (darkScore > lightScore){
@@ -131,10 +125,9 @@ public class OthelloState implements GameState<OthelloAction>{
 		return clonedState;
 	}
 	
-	
 	@Override
 	public boolean isFinal() {
-		return this.isGameOver();
+		return this.gameOver;
 	}
 
 	@Override
@@ -143,8 +136,10 @@ public class OthelloState implements GameState<OthelloAction>{
 	}
 
 	@Override
-	public GameState<OthelloAction> apply(OthelloAction action) {
-		return this.newState(action);
+	public OthelloState apply(OthelloAction action) {
+		OthelloState newState = this.clone();
+		newState.changeState(action);
+		return newState;
 	}
 
 }

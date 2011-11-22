@@ -8,7 +8,7 @@ public class NoobEvaluator implements StateEvaluator<OthelloState> {
 
 	public int evaluate(OthelloState state, Player player) {
 		int scoreDiff = state.getScore(player) - state.getScore(player.getOpponent());
-		if (state.isGameOver()){
+		if (state.isFinal()){
 			if (scoreDiff > 0) return Integer.MAX_VALUE;
 			else if (scoreDiff < 0) return Integer.MIN_VALUE;
 			else return 0;

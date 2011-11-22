@@ -101,7 +101,7 @@ public class OthelloClient extends Thread {
 	}
 	
 	public void run() {
-		while (!gameState.isGameOver()){			
+		while (!gameState.isFinal()){			
 			try {
 				if (interrupted()) throw new InterruptedException();
 				gameUI.refresh("Esperando jogada de " + gameState.getNextPlayer() + "...");

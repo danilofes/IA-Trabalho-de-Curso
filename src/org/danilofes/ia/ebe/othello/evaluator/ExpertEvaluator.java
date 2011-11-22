@@ -23,7 +23,7 @@ public class ExpertEvaluator implements StateEvaluator<OthelloState> {
 		int myScore = 0;
 		int opponentScore = 0;		
 		
-		if (state.isGameOver()){
+		if (state.isFinal()){
 			myScore = state.getScore(player);
 			opponentScore = state.getScore(player.getOpponent());
 			if (myScore == opponentScore) return 0;
