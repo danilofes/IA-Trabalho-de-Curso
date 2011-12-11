@@ -10,7 +10,7 @@ public class BitInversionOperator implements MutationOperator {
 	private final float mutationRatio;
 	
 	public BitInversionOperator() {
-		this(0.1f);
+		this(0.06f);
 	}
 	
 	public BitInversionOperator(float mutationRatio) {
