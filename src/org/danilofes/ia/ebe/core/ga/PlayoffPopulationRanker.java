@@ -39,30 +39,33 @@ public class PlayoffPopulationRanker implements PopulationRanker {
 
 	private void runPlayoffs() {
 		int size = this.size;
+		int bonus = 1;
 		while (size > 1) {
-			this.roundOf(size);
+			this.roundOf(size, bonus);
 			size = size / 2;
+			bonus++;
 		}
 	}
 
-	private void roundOf(int size) {
-		System.out.println("Beggining round of " + size);
+	private void roundOf(int size, int bonus) {
 		int half = size/2;
 		for (int i = 0; i < half; i++) {
 			BitString p0 = this.population.get(i);
 			BitString p1 = this.population.get(half + i);
+			BitString winner;
 			if (this.comparator.compare(p0, p1) < 0) {
 				// Troca de posições para manter a ordem do ranking.
 				this.population.set(i, p1);
 				this.population.set(half + i, p0);
 				
-				// Replica o vencedor na lista para aumentar a probabilidade dele ser escolhido
-				this.population.add(p1);
+				winner = p1;
 			} else {
-				// Replica o vencedor na lista para aumentar a probabilidade dele ser escolhido
-				this.population.add(p0);
+				winner = p0;
 			}
-			
+			// Replica o vencedor na lista para aumentar a probabilidade dele ser escolhido
+			for (int j = 0; j < bonus; j++) {
+				this.population.add(winner);
+			}
 		}
 	}
 	

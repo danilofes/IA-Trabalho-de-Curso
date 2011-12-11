@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.danilofes.ia.ebe.core.GameState;
 import org.danilofes.ia.ebe.core.Parameter;
+import org.danilofes.ia.ebe.core.StateEvaluator;
 import org.danilofes.ia.ebe.core.StateEvaluatorFactory;
 import org.danilofes.util.BitString;
 
@@ -29,18 +30,67 @@ public class EvaluationFunctionEvolver {
 		
 		PopulationEvolver evolver = new PopulationEvolver(co, mo);
 		
-		for (int generation = 0; generation < 10; generation++) {
+		for (int generation = 0; generation < 20; generation++) {
 			ranker.setPopulation(currentPopulation);
 			
-			System.out.println();
-			System.out.println("### Generation " + generation + " ###");
-			for (int i = 0; i < ranker.getSize(); i++) {
-				System.out.println(evaluatorFactory.getEvaluator(ranker.selectByRank(i)).toString());
-			}
-			System.out.println();
+			this.printGeneration(evaluatorFactory, ranker, generation);
+			
+			this.computeStatistics(evaluatorFactory, ranker, generation);
 
 			currentPopulation = evolver.evolve(ranker);
 		} 
+	}
+
+	private void computeStatistics(StateEvaluatorFactory<? extends GameState<?>> factory, PlayoffPopulationRanker ranker, int generation) {
+		int params = factory.getParameters().size();
+		
+		double[] avg = new double[params];
+		double[] std = new double[params];
+		
+		ArrayList<StateEvaluator<? extends GameState<?>>> evals = new ArrayList<StateEvaluator<? extends GameState<?>>>(ranker.getSize());
+		for (int i = 0; i < ranker.getSize(); i++) {
+			evals.add(factory.getEvaluator(ranker.selectByRank(i)));
+		}
+		
+		System.out.print("### avg: [");
+		for (int i = 0; i < params; i++) {
+			avg[i] = 0.0;
+			for (StateEvaluator<? extends GameState<?>> eval : evals) {
+				avg[i] += (double) eval.getValue(i);
+			}
+			avg[i] = avg[i] / (double) this.popSize;
+			
+			if (i != 0) {
+				System.out.print(", ");
+			}
+			System.out.print(avg[i]);
+		}
+		System.out.println("]");
+		
+		System.out.print("### std: [");
+		for (int i = 0; i < params; i++) {
+			std[i] = 0.0;
+			for (StateEvaluator<? extends GameState<?>> eval : evals) {
+				std[i] += Math.pow((double) eval.getValue(i) - avg[i], 2);
+			}
+			std[i] = Math.sqrt(std[i] / (double) this.popSize);
+			if (i != 0) {
+				System.out.print(", ");
+			}
+			System.out.print(std[i]);
+		}
+		System.out.println("]");
+
+		System.out.println();
+	}
+
+	private void printGeneration(StateEvaluatorFactory<? extends GameState<?>> evaluatorFactory, PlayoffPopulationRanker ranker, int generation) {
+		System.out.println();
+		System.out.println("### Generation " + generation + " ###");
+		for (int i = 0; i < ranker.getSize(); i++) {
+			System.out.println(evaluatorFactory.getEvaluator(ranker.selectByRank(i)).toString());
+		}
+		System.out.println();
 	}
 
 	private int computeBitStringLength(List<Parameter> parameters) {

@@ -34,6 +34,11 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 	}
 	
 	@Override
+	public List<Parameter> getParameters() {
+		return PARAMS;
+	}
+
+	@Override
 	public int evaluate(OthelloState state, Player player) {
 		
 		if (state.isFinal()) {
@@ -47,6 +52,8 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 		v += this.getCornersScore(state, player); 
 		
 		v += this.getMobilityScore(state, player);
+
+		v += this.getCornerRiskScore(state, player);
 		
 		return v;
 	}
@@ -89,14 +96,14 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 		
 		if (this.countPiece(state, player, 0, 0) == 0) {
 			cornerRiskDiff += this.countPiece(state, player, 0, 1);
-			cornerRiskDiff += this.countPiece(state, player, 1, 0);
 			cornerRiskDiff += this.countPiece(state, player, 1, 1);
+			cornerRiskDiff += this.countPiece(state, player, 1, 0);
 		}
 
 		if (this.countPiece(state, player, 0, OthelloBoard.SIZE - 1) == 0) {
 			cornerRiskDiff += this.countPiece(state, player, 0, OthelloBoard.SIZE - 2);
-			cornerRiskDiff += this.countPiece(state, player, 1, OthelloBoard.SIZE - 1);
 			cornerRiskDiff += this.countPiece(state, player, 1, OthelloBoard.SIZE - 2);
+			cornerRiskDiff += this.countPiece(state, player, 1, OthelloBoard.SIZE - 1);
 		}
 		
 		if (this.countPiece(state, player, OthelloBoard.SIZE - 1, 0) == 0) {
@@ -106,8 +113,8 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 		}
 
 		if (this.countPiece(state, player, OthelloBoard.SIZE - 1, OthelloBoard.SIZE - 1) == 0) {
-			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, OthelloBoard.SIZE - 1);
 			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, OthelloBoard.SIZE - 2);
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, OthelloBoard.SIZE - 1);
 			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 1, OthelloBoard.SIZE - 2);
 		}
 
@@ -117,11 +124,12 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 	@Override
 	public String toString() {
 		return String.format(
-		    "[(%d)PIE + (%d)COR + (%d)MOB + (%d)CRI]",
+		    "[%d, %d, %d, %d]",
 		    this.getValue(PIECES),
 		    this.getValue(CORNERS),
 		    this.getValue(MOBILITY),
 		    this.getValue(CORNER_RISK)
 	    );
 	}
+
 }
