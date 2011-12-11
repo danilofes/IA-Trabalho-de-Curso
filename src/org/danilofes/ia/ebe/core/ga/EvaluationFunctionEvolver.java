@@ -14,7 +14,7 @@ import org.danilofes.util.BitString;
 
 public class EvaluationFunctionEvolver {
 	
-	private int popSize = 8;
+	private int popSize = 32;
 
 	public void run(StateEvaluatorFactory<? extends GameState<?>> evaluatorFactory, Comparator<BitString> comparator) {
 
@@ -32,11 +32,12 @@ public class EvaluationFunctionEvolver {
 		for (int i = 0; i < 10; i++) {
 			currentPopulation = evolver.evolve(currentPopulation);
 			
-			System.out.println("Generation " + i);
+			System.out.println();
+			System.out.println("### Generation " + i + " ###");
 			for (BitString individual : currentPopulation) {
-				System.out.println(individual.toString());
+				System.out.println(evaluatorFactory.getEvaluator(individual).toString());
 			}
-			System.out.println("===");
+			System.out.println();
 		} 
 	}
 

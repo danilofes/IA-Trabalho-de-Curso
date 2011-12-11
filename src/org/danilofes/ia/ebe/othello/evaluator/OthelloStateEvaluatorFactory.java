@@ -1,6 +1,5 @@
 package org.danilofes.ia.ebe.othello.evaluator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.danilofes.ia.ebe.core.Parameter;
@@ -13,15 +12,12 @@ public class OthelloStateEvaluatorFactory extends StateEvaluatorFactory<OthelloS
 
 	@Override
 	public List<Parameter> getParameters() {
-		Parameter parameter = new Parameter(8);
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(parameter);
-		return parameters;
+		return OthelloStateEvaluator.PARAMS;
 	}
 
 	@Override
-	public StateEvaluator<OthelloState> getEvaluator(BitString parameters) {
-		return new ExpertEvaluator();
+	public StateEvaluator<OthelloState> getEvaluator(BitString paramValues) {
+		return new OthelloStateEvaluator(this.decodeParams(paramValues));
 	}
 
 }

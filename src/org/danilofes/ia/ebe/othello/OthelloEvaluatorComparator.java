@@ -36,7 +36,7 @@ public class OthelloEvaluatorComparator implements Comparator<BitString> {
 		winner = executor.executeMatch(agent1, agent0);
 		outcome += (winner == Player.PLAYER_1) ? -1 : 1;
 		
-		System.out.println(o0.toString() + " vs " + o1.toString() + " = " + outcome);
+		System.out.println(evaluator0.toString() + " vs " + evaluator1.toString() + " = " + outcome);
 		return outcome;
 	}
 

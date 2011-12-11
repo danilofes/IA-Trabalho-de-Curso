@@ -1,11 +1,7 @@
 package org.danilofes.ia.ebe.othello.evaluator;
 
-import org.danilofes.ia.ebe.core.Player;
-import org.danilofes.ia.ebe.othello.OthelloBoard;
-import org.danilofes.ia.ebe.othello.OthelloState;
-import org.danilofes.util.GridCoordinates;
 
-public class ExpertEvaluator extends AbstractOthelloStateEvaluator {
+public class ExpertEvaluator extends OthelloStateEvaluator {
 	
 	public static final int cellValue[][] = {
 		{ 99, -8,  8,  6,  6,  8, -8, 99}, 
@@ -17,48 +13,9 @@ public class ExpertEvaluator extends AbstractOthelloStateEvaluator {
 		{ -8,-24, -4, -3, -3, -4,-24, -8}, 
 		{ 99, -8,  8,  6,  6,  8, -8, 99}
 	};
-	
-	public int evaluate(OthelloState state, Player player) {
-		int myScore = 0;
-		int opponentScore = 0;		
-		
-		if (state.isFinal()){
-			myScore = state.getScore(player);
-			opponentScore = state.getScore(player.getOpponent());
-			if (myScore == opponentScore) return 0;
-			else if (myScore > opponentScore) return Integer.MAX_VALUE - opponentScore;
-			else return Integer.MIN_VALUE + myScore;
-		}
-		else {
-			GridCoordinates c = new GridCoordinates(0, 0);
-			for (c.row = 0; c.row < OthelloBoard.SIZE; c.row++) {
-				for (c.col = 0; c.col < OthelloBoard.SIZE; c.col++) {
-					byte cell = state.getBoard().get(c);
-					
-					if (cell == player.getValue()){
-						myScore += cellValue[c.row][c.col];
-						//if (!state.getBoard().isInternal(c)){
-						//	myScore--;
-						//}
-					}
-					else if (cell == player.getValue()){
-						myScore -= cellValue[c.row][c.col];
-						//opponentScore += cellValue[c.row][c.column];
-						//if (!state.getBoard().isInternal(c)){
-						//	opponentScore--;
-						//}
-					}		
-				}
-			}
-			
-			int mobility = state.getPossibleMoves(player).size() - state.getPossibleMoves(player.getOpponent()).size();
-			myScore += mobility * 10;
-			
-			//myScore += state.getPossibleMoves(player).size();
-			//opponentScore += state.getPossibleMoves(player.getOpponent()).size();
-			
-			return myScore;
-		}		
+
+	public ExpertEvaluator() {
+		super(new int[]{1, 10, 10});
 	}
 
 }
