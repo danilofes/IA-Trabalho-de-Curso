@@ -12,7 +12,7 @@ public class MinimaxAgent<A extends GameAction> implements GameAgent<A> {
 	private A choosenAction;
 
 	public MinimaxAgent(StateEvaluator<? extends GameState<A>> evaluator) {
-		this(evaluator, 4);
+		this(evaluator, 3);
 	}
 
 	

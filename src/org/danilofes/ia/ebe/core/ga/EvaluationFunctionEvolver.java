@@ -27,17 +27,19 @@ public class EvaluationFunctionEvolver {
 		MutationOperator mo = new BitInversionOperator();
 		PlayoffPopulationRanker ranker = new PlayoffPopulationRanker(comparator);
 		
-		PopulationEvolver evolver = new PopulationEvolver(ranker, co, mo);
+		PopulationEvolver evolver = new PopulationEvolver(co, mo);
 		
-		for (int i = 0; i < 10; i++) {
-			currentPopulation = evolver.evolve(currentPopulation);
+		for (int generation = 0; generation < 10; generation++) {
+			ranker.setPopulation(currentPopulation);
 			
 			System.out.println();
-			System.out.println("### Generation " + i + " ###");
-			for (BitString individual : currentPopulation) {
-				System.out.println(evaluatorFactory.getEvaluator(individual).toString());
+			System.out.println("### Generation " + generation + " ###");
+			for (int i = 0; i < ranker.getSize(); i++) {
+				System.out.println(evaluatorFactory.getEvaluator(ranker.selectByRank(i)).toString());
 			}
 			System.out.println();
+
+			currentPopulation = evolver.evolve(ranker);
 		} 
 	}
 

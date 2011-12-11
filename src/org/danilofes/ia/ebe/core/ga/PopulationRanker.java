@@ -8,6 +8,8 @@ public interface PopulationRanker {
 	
 	void setPopulation(Collection<BitString> population);
 	
+	int getSize();
+	
 	BitString selectByRank(int rank);
 	
 	BitString selectByProbability();

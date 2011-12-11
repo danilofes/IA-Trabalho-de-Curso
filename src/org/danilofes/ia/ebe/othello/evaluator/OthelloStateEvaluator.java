@@ -15,10 +15,12 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 	private static final int PIECES = 0;
 	private static final int CORNERS = 1;
 	private static final int MOBILITY = 2;
+	private static final int CORNER_RISK = 3;
 
 	public static final List<Parameter> PARAMS = new ArrayList<Parameter>();
 	
 	static {
+		PARAMS.add(new Parameter(8));
 		PARAMS.add(new Parameter(8));
 		PARAMS.add(new Parameter(8));
 		PARAMS.add(new Parameter(8));
@@ -81,8 +83,45 @@ public class OthelloStateEvaluator extends StateEvaluator<OthelloState> {
 		return this.getValue(MOBILITY) * mobilityDiff;
 	}
 
+	private int getCornerRiskScore(OthelloState state, Player player) {
+		
+		int cornerRiskDiff = 0;
+		
+		if (this.countPiece(state, player, 0, 0) == 0) {
+			cornerRiskDiff += this.countPiece(state, player, 0, 1);
+			cornerRiskDiff += this.countPiece(state, player, 1, 0);
+			cornerRiskDiff += this.countPiece(state, player, 1, 1);
+		}
+
+		if (this.countPiece(state, player, 0, OthelloBoard.SIZE - 1) == 0) {
+			cornerRiskDiff += this.countPiece(state, player, 0, OthelloBoard.SIZE - 2);
+			cornerRiskDiff += this.countPiece(state, player, 1, OthelloBoard.SIZE - 1);
+			cornerRiskDiff += this.countPiece(state, player, 1, OthelloBoard.SIZE - 2);
+		}
+		
+		if (this.countPiece(state, player, OthelloBoard.SIZE - 1, 0) == 0) {
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, 0);
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, 1);
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 1, 1);
+		}
+
+		if (this.countPiece(state, player, OthelloBoard.SIZE - 1, OthelloBoard.SIZE - 1) == 0) {
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, OthelloBoard.SIZE - 1);
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 2, OthelloBoard.SIZE - 2);
+			cornerRiskDiff += this.countPiece(state, player, OthelloBoard.SIZE - 1, OthelloBoard.SIZE - 2);
+		}
+
+		return this.getValue(CORNER_RISK) * cornerRiskDiff;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("(%d)PIE + (%d)COR + (%d)MOB", this.getValue(PIECES), this.getValue(CORNERS), this.getValue(MOBILITY));
+		return String.format(
+		    "[(%d)PIE + (%d)COR + (%d)MOB + (%d)CRI]",
+		    this.getValue(PIECES),
+		    this.getValue(CORNERS),
+		    this.getValue(MOBILITY),
+		    this.getValue(CORNER_RISK)
+	    );
 	}
 }
