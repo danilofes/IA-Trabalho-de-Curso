@@ -1,6 +1,7 @@
 package org.danilofes.util;
 
-public class BitString {
+
+public class BitString implements Cloneable {
 
 	private final boolean[] bits;
 
@@ -63,5 +64,16 @@ public class BitString {
 			stringData[i] = this.bits[i] ? '1' : '0';
 		}
 		return new String(stringData);
+	}
+	
+	public int size() {
+		return this.bits.length;
+	}
+	
+	@Override
+	public BitString clone() {
+		BitString clone = new BitString(this.bits.length);
+		clone.setBits(this.toString());
+		return clone;
 	}
 }

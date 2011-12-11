@@ -1,12 +1,11 @@
 package org.danilofes.ia.ebe.othello.evaluator;
 
 import org.danilofes.ia.ebe.core.Player;
-import org.danilofes.ia.ebe.core.StateEvaluator;
 import org.danilofes.ia.ebe.othello.OthelloBoard;
 import org.danilofes.ia.ebe.othello.OthelloState;
 import org.danilofes.util.GridCoordinates;
 
-public class AverageEvaluator implements StateEvaluator<OthelloState> {
+public class AverageEvaluator extends AbstractOthelloStateEvaluator {
 	
 	public static final int cellValue[][] = {
 		{ 99, -8,  8,  6,  6,  8, -8, 99}, 

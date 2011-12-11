@@ -1,10 +1,9 @@
 package org.danilofes.ia.ebe.othello.evaluator;
 
 import org.danilofes.ia.ebe.core.Player;
-import org.danilofes.ia.ebe.core.StateEvaluator;
 import org.danilofes.ia.ebe.othello.OthelloState;
 
-public class NoobEvaluator implements StateEvaluator<OthelloState> {
+public class NoobEvaluator extends AbstractOthelloStateEvaluator {
 
 	public int evaluate(OthelloState state, Player player) {
 		int scoreDiff = state.getScore(player) - state.getScore(player.getOpponent());
