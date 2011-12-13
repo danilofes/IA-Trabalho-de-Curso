@@ -15,7 +15,13 @@ import org.danilofes.util.BitString;
 
 public class EvaluationFunctionEvolver {
 	
-	private int popSize = 32;
+	private int popSize;
+	private int maxGenerations;
+
+	public EvaluationFunctionEvolver(int popSize, int maxGenerations) {
+		this.popSize = popSize;
+		this.maxGenerations = maxGenerations;
+	}
 
 	public void run(StateEvaluatorFactory<? extends GameState<?>> evaluatorFactory, Comparator<BitString> comparator) {
 
@@ -30,10 +36,10 @@ public class EvaluationFunctionEvolver {
 		
 		PopulationEvolver evolver = new PopulationEvolver(co, mo);
 		
-		for (int generation = 0; generation < 20; generation++) {
+		for (int generation = 0; generation < this.maxGenerations; generation++) {
 			ranker.setPopulation(currentPopulation);
 			
-			this.printGeneration(evaluatorFactory, ranker, generation);
+			//this.printGeneration(evaluatorFactory, ranker, generation);
 			
 			this.computeStatistics(evaluatorFactory, ranker, generation);
 
@@ -52,7 +58,6 @@ public class EvaluationFunctionEvolver {
 			evals.add(factory.getEvaluator(ranker.selectByRank(i)));
 		}
 		
-		System.out.print("### avg: [");
 		for (int i = 0; i < params; i++) {
 			avg[i] = 0.0;
 			for (StateEvaluator<? extends GameState<?>> eval : evals) {
@@ -60,28 +65,25 @@ public class EvaluationFunctionEvolver {
 			}
 			avg[i] = avg[i] / (double) this.popSize;
 			
-			if (i != 0) {
-				System.out.print(", ");
-			}
-			System.out.print(avg[i]);
 		}
-		System.out.println("]");
 		
-		System.out.print("### std: [");
+		System.out.println();
+		
 		for (int i = 0; i < params; i++) {
 			std[i] = 0.0;
 			for (StateEvaluator<? extends GameState<?>> eval : evals) {
 				std[i] += Math.pow((double) eval.getValue(i) - avg[i], 2);
 			}
 			std[i] = Math.sqrt(std[i] / (double) this.popSize);
-			if (i != 0) {
-				System.out.print(", ");
-			}
-			System.out.print(std[i]);
 		}
-		System.out.println("]");
 
-		System.out.println();
+		for (int i = 0; i < params; i++) {
+			System.out.println(String.format("best[%d]: %d\t%d", i, generation, evals.get(0).getValue(i)));
+		}
+		for (int i = 0; i < params; i++) {
+			System.out.println(String.format("avg[%d]: %d\t%f\t%f", i, generation, avg[i], std[i]));
+		}
+
 	}
 
 	private void printGeneration(StateEvaluatorFactory<? extends GameState<?>> evaluatorFactory, PlayoffPopulationRanker ranker, int generation) {

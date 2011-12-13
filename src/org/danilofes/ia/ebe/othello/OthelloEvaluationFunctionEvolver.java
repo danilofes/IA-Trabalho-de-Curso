@@ -11,9 +11,10 @@ public class OthelloEvaluationFunctionEvolver {
 
 	public static void main(String[] args) {
 		
-		EvaluationFunctionEvolver evolver = new EvaluationFunctionEvolver();
 		StateEvaluatorFactory<OthelloState> factory = new OthelloStateEvaluatorFactory();
 		Comparator<BitString> comparator = new OthelloEvaluatorComparator(factory);
+
+		EvaluationFunctionEvolver evolver = new EvaluationFunctionEvolver(32, 200);
 		
 		evolver.run(factory, comparator);
 		
